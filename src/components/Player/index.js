@@ -1,5 +1,9 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Slider from "rc-slider";
+import Sound from "react-sound";
+import PropTypes from "prop-types";
+
+import { connect } from "react-redux";
 
 import {
     Container,
@@ -19,18 +23,25 @@ import PauseIcon from "../../assets/images/pause.svg";
 import ForwardIcon from "../../assets/images/forward.svg";
 import RepeatIcon from "../../assets/images/repeat.svg";
 
-const Player = () => (
+const Player = ({ player }) => (
     <Container>
+        {!!player.currentSong && (
+            <Sound url={player.currentSong.file} playStatus={player.status} />
+        )}
         <Current>
-            <img
-                src="https://www.billboard.com/files/styles/900_wide/public/media/Green-Day-American-Idiot-album-covers-billboard-1000x1000.jpg"
-                alt="Cover"
-            />
+            {!!player.currentSong && (
+                <Fragment>
+                    <img
+                        src={player.currentSong.thumbnail}
+                        alt={player.currentSong.title}
+                    />
 
-            <div>
-                <span>American Idiot</span>
-                <small>Green Day</small>
-            </div>
+                    <div>
+                        <span>{player.currentSong.title}</span>
+                        <small>{player.currentSong.author}</small>
+                    </div>
+                </Fragment>
+            )}
         </Current>
 
         <Progress>
@@ -77,4 +88,20 @@ const Player = () => (
     </Container>
 );
 
-export default Player;
+Player.propTypes = {
+    player: PropTypes.shape({
+        currentSong: PropTypes.shape({
+            thumbnail: PropTypes.string,
+            title: PropTypes.string,
+            author: PropTypes.string,
+            file: PropTypes.string
+        }),
+        status: PropTypes.string
+    }).isRequired
+};
+
+const mapStateToProps = state => ({
+    player: state.player
+});
+
+export default connect(mapStateToProps)(Player);
