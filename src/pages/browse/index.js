@@ -1,65 +1,64 @@
-import React from "react";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Creators as PlaylistsActions } from "../../store/ducks/playlists";
 
 import { Container, Title, List, Playlist } from "./styles";
 
-const Browse = () => (
-    <Container>
-        <Title>Navegar</Title>
+class Browse extends Component {
+    static propTypes = {
+        getPlaylistsRequest: PropTypes.func.isRequired,
+        playlists: PropTypes.shape({
+            data: PropTypes.arrayOf(
+                PropTypes.shape({
+                    id: PropTypes.number,
+                    title: PropTypes.string,
+                    thumbnail: PropTypes.string,
+                    description: PropTypes.string
+                })
+            )
+        }).isRequired
+    };
+    componentDidMount() {
+        this.props.getPlaylistsRequest();
+    }
 
-        <List>
-            <Playlist to="/playlist/1">
-                <img
-                    src="https://www.billboard.com/files/styles/900_wide/public/media/Green-Day-American-Idiot-album-covers-billboard-1000x1000.jpg"
-                    alt="Playlist"
-                />
+    render() {
+        return (
+            <Container>
+                <Title>Navegar</Title>
 
-                <strong>Rock dos bons</strong>
-                <p>
-                    Relaxe enquanto você programa ouvindo apenas as melhores do
-                    rock mundial!
-                </p>
-            </Playlist>
+                <List>
+                    {this.props.playlists.data.map(playlist => (
+                        <Playlist
+                            key={playlist.id}
+                            to={`/playlist/${playlist.id}`}
+                        >
+                            <img
+                                src={playlist.thumbnail}
+                                alt={playlist.title}
+                            />
 
-            <Playlist to="/playlist/1">
-                <img
-                    src="https://www.billboard.com/files/styles/900_wide/public/media/Green-Day-American-Idiot-album-covers-billboard-1000x1000.jpg"
-                    alt="Playlist"
-                />
+                            <strong>{playlist.title}</strong>
+                            <p>{playlist.description}</p>
+                        </Playlist>
+                    ))}
+                </List>
+            </Container>
+        );
+    }
+}
 
-                <strong>Rock dos bons</strong>
-                <p>
-                    Relaxe enquanto você programa ouvindo apenas as melhores do
-                    rock mundial!
-                </p>
-            </Playlist>
+const mapStateToProps = state => ({
+    playlists: state.playlist
+});
 
-            <Playlist to="/playlist/1">
-                <img
-                    src="https://www.billboard.com/files/styles/900_wide/public/media/Green-Day-American-Idiot-album-covers-billboard-1000x1000.jpg"
-                    alt="Playlist"
-                />
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(PlaylistsActions, dispatch);
 
-                <strong>Rock dos bons</strong>
-                <p>
-                    Relaxe enquanto você programa ouvindo apenas as melhores do
-                    rock mundial!
-                </p>
-            </Playlist>
-
-            <Playlist to="/playlist/1">
-                <img
-                    src="https://www.billboard.com/files/styles/900_wide/public/media/Green-Day-American-Idiot-album-covers-billboard-1000x1000.jpg"
-                    alt="Playlist"
-                />
-
-                <strong>Rock dos bons</strong>
-                <p>
-                    Relaxe enquanto você programa ouvindo apenas as melhores do
-                    rock mundial!
-                </p>
-            </Playlist>
-        </List>
-    </Container>
-);
-
-export default Browse;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Browse);
