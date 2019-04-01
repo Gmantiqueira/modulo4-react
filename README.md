@@ -2,6 +2,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+## 'json-server server.json -p 3001 -w -d 500'
+
+To run server.json - Spotify playlists
+
+---
+
 In the project directory, you can run:
 
 ### `npm start`
