@@ -29,6 +29,7 @@ export default function player(state = INITIAL_STATE, action) {
                 ...state,
                 currentSong: action.payload.song,
                 list: action.payload.list,
+                position: 0,
                 status: Sound.status.PLAYING
             };
 
